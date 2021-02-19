@@ -1,14 +1,30 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Cart } from 'src/app/Models/cart.model';
+import { User } from 'src/app/models/user.model';
+import { CartUtil } from 'src/app/utils/cart.util';
+import { Security } from 'src/app/utils/security.util';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
-
-  constructor() { }
+  public user: User;
+  public cartItens: number = 0;
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
+    this.user = Security.getUser();
+    this.cartItensCount();
   }
 
+  public cartItensCount() {
+    this.cartItens = CartUtil.get().items.length;
+  }
+
+  logout() {
+    Security.clear();
+    this.router.navigate(['/login'])
+  }
 }

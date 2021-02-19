@@ -6,10 +6,10 @@ import { DataService } from 'src/app/services/data.services';
 import { CustomValidator } from 'src/app/validators/custom.validator';
 
 @Component({
-  selector: 'app-signup-page',
-  templateUrl: './signup-page.component.html'
+  selector: 'app-profile-page',
+  templateUrl: './profile-page.component.html'
 })
-export class SignupPageComponent implements OnInit {
+export class ProfilePageComponent implements OnInit {
   public form: FormGroup;
   public busy = false;
 
@@ -24,42 +24,45 @@ export class SignupPageComponent implements OnInit {
         Validators.maxLength(80),
         Validators.required
       ])],
-      document: ['', Validators.compose([
-        Validators.maxLength(14),
-        Validators.maxLength(14),
-        Validators.required,
-        CustomValidator.isCpf()
-      ])],
+      document: [{ value: '', disabled: true }],
       email: ['', Validators.compose([
         Validators.minLength(5),
         Validators.maxLength(120),
         Validators.required,
         CustomValidator.EmailValidator
-      ])],
-      password: ['', Validators.compose([
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required
       ])]
     });
   }
 
   ngOnInit(): void {
-  }
-
-  submit() {
     this.busy = true;
     this
       .service
-      .create(this.form.value)
+      .getProfile()
       .subscribe((data: any) => {
         this.busy = false;
-        this.toastr.success(data.message, 'Bem-vindo!');
-        this.router.navigate(['/login']);
+        this.form.controls['name'].setValue(data.name);
+        this.form.controls['document'].setValue(data.document);
+        this.form.controls['email'].setValue(data.email);
+
       }, (err) => {
         console.log(err);
         this.busy = false;
       });
   }
 
+  submit() {
+    this.busy = true;
+    this
+      .service
+      .updateProfile(this.form.value)
+      .subscribe((data: any) => {
+        this.busy = false;
+        this.toastr.success(data.message, 'Atualização Completa!');
+        this.router.navigate(['/products'])
+      }, (err) => {
+        console.log(err);
+        this.busy = false;
+      });
+  }
 }

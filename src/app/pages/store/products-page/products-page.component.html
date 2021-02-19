@@ -1,6 +1,7 @@
 <div class="uk-container">
     <div class="uk-grid">
-        <div class="uk-width-1-3 uk-magin-small-bottom uk-margin-small-top" *ngFor="let product of products$ | async">
+        <div class="uk-width-1-3 uk-magin-small-bottom uk-margin-large-top" *ngFor="let product of products$ | async">
+            <app-loading *ngIf="busy"></app-loading>
             <app-product-card [product]="product"></app-product-card>
         </div>
     </div>
